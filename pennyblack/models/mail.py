@@ -174,6 +174,7 @@ class Mail(models.Model):
         newsletter = self.job.newsletter
         context = self.get_context()
         context['newsletter'] = newsletter
+        context['public_url'] = self.job.public_url
         context['webview'] = webview
         if isinstance(self.extra_context, dict):
             context.update(self.extra_context)

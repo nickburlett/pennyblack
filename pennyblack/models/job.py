@@ -43,6 +43,10 @@ class Job(models.Model):
     #ga tracking
     utm_campaign = models.SlugField(verbose_name=_("utm campaign"), blank=True)
 
+    public_slug = models.SlugField(verbose_name=_("slug"), unique=True, 
+            help_text=_("Unique slug to allow public access to the newsletter"),
+            blank=True, null=True)
+
     class Meta:
         ordering = ('-date_created',)
         verbose_name = _("newsletter delivery task")
@@ -59,6 +63,11 @@ class Job(models.Model):
         if not self.newsletter.active:
             self.newsletter.delete()
         super(Job, self).delete(*args, **kwargs)
+
+    @property
+    def public_url(self):
+        return self.newsletter.get_base_url() + reverse('pennyblack.views.view_public', args=(self.public_slug,))
+
 
     @property
     def count_mails_total(self):
@@ -126,6 +135,14 @@ class Job(models.Model):
         Is used to determine if a send button should be displayed.
         """
         if not self.status in settings.JOB_STATUS_CAN_SEND:
+            return False
+        return self.is_valid()
+
+    def can_view_public(self):
+        """
+        Used to determine if a job's newsletter can be viewed publically
+        """
+        if not self.status in settings.JOB_STATUS_CAN_VIEW_PUBLIC:
             return False
         return self.is_valid()
 
@@ -224,9 +241,9 @@ class JobAdmin(admin.ModelAdmin):
 
     date_hierarchy = 'date_deliver_start'
     actions = None
-    list_display = ('newsletter', 'group_object', 'status', 'field_mails_total', 'field_mails_sent', 'date_created')
+    list_display = ('newsletter', 'group_object', 'status', 'public_slug', 'field_mails_total', 'field_mails_sent', 'date_created')
     list_filter = ('status', 'newsletter',)
-    fields = ('newsletter', 'collection', 'status', 'group_object', 'field_mails_total', 'field_mails_sent', 'date_deliver_start', 'date_deliver_finished', 'utm_campaign')
+    fields = ('newsletter', 'collection', 'status', 'group_object', 'field_mails_total', 'field_mails_sent', 'date_deliver_start', 'date_deliver_finished', 'public_slug', 'utm_campaign')
     readonly_fields = ('collection', 'status', 'group_object', 'field_mails_total', 'field_mails_sent', 'date_deliver_start', 'date_deliver_finished',)
     inlines = (LinkInline, MailInline,)
     massmail_form = JobAdminForm

@@ -11,6 +11,7 @@ from django.template import RequestContext
 from django.utils.functional import wraps
 
 from pennyblack.models import Newsletter, Link, Mail, Job
+from pennyblack import settings
 
 
 class HttpResponseRedirectWithMailto(HttpResponseRedirect):
@@ -57,17 +58,31 @@ def preview(request, newsletter_id):
     newsletter = Newsletter.objects.filter(pk=newsletter_id)[0]
     request.content_context = {
         'newsletter': newsletter,
+        'public_url': '#',
         'webview': True,
     }
     job_id = request.GET.get('job', None)
     if job_id:
         job = get_object_or_404(Job, pk=job_id)
+        request.content_context['public_url'] = job.public_url
         if job.mails.count():
             mail = job.mails.all()[0]
             request.content_context.update(mail.get_context())
             request.content_context.update({'base_url': ''})
     return render_to_response(newsletter.template.path, request.content_context, context_instance=RequestContext(request))
 
+def view_public(request, job_slug):
+    """
+    View a job by public slug.
+    """
+    job = get_object_or_404(Job, public_slug=job_slug, status__in=settings.JOB_STATUS_CAN_VIEW_PUBLIC)
+    newsletter = job.newsletter
+    request.content_context = {
+        'newsletter': newsletter,
+        'public_url': job.public_url,
+        'webview': True,
+    }
+    return render_to_response(newsletter.template.path, request.content_context, context_instance=RequestContext(request))
 
 @needs_mail
 @needs_link
