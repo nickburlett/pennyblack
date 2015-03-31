@@ -1,4 +1,4 @@
-from django.core.validators import email_re
+from django.core.validators import EmailValidator
 
 from pennyblack.module.subscriber.models import NewsletterSubscriber, SubscriberGroup
 
@@ -7,7 +7,8 @@ def add_subscriber(email, groups=[], **kwargs):
     """
     Adds a subscriber to the given groups
     """
-    if not email_re.match(email):
+    valid_email = EmailValidator()
+    if not valid_email(email):
         return False
     subscriber = NewsletterSubscriber.objects.get_or_add(email, **kwargs)
     for group_name in groups:

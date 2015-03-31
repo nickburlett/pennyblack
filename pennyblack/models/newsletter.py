@@ -2,7 +2,7 @@
 import mimetypes
 import os
 
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib import admin
@@ -307,7 +307,7 @@ class NewsletterAdmin(item_editor.ItemEditor, admin.ModelAdmin):
             return self.readonly_fields + ('newsletter_type',)
         return self.readonly_fields
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         return self.model.objects.active()
 
     def get_urls(self):

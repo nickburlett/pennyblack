@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.admin.util import unquote
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.contrib.contenttypes import generic
 from django.core import mail
 from django.core.context_processors import csrf
@@ -232,7 +232,7 @@ class JobStatistic(Job):
 
 class JobAdminForm(forms.ModelForm):
     from pennyblack.models.newsletter import Newsletter
-    newsletter = forms.ModelChoiceField(queryset=Newsletter.objects.massmail())
+    newsletter = forms.ModelChoiceField(queryset=Newsletter.objects.massmail)
 
 
 class JobAdmin(admin.ModelAdmin):
@@ -310,7 +310,7 @@ class JobStatisticAdmin(admin.ModelAdmin):
     fields = ('newsletter', 'collection', 'group_object', 'date_deliver_start', 'date_deliver_finished', 'utm_campaign')
     readonly_fields = ('newsletter', 'collection', 'group_object', 'date_deliver_start', 'date_deliver_finished', 'utm_campaign')
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         return self.model.objects.exclude(status=1)
 
     def has_add_permission(self, request):

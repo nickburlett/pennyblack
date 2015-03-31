@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.contrib.contenttypes import generic
 from django.core import mail
 from django.core.urlresolvers import NoReverseMatch, reverse
-from django.core.validators import email_re
+from django.core.validators import EmailValidator
 from django.db import models
 from django.http import HttpRequest
 from django.template.loader import render_to_string
@@ -125,7 +125,8 @@ class Mail(models.Model):
         """
         Checks if this Mail is valid by validating the email address.
         """
-        return email_re.match(self.person.get_email())
+        valid_email = EmailValidator()
+        return valid_email(self.person.get_email())
 
     def get_email(self):
         """
@@ -218,7 +219,7 @@ class MailInline(admin.TabularInline):
     fields = ('get_email',)
     readonly_fields = ('get_email',)
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         """
         Don't display Inlines if there are more than a certain amount
         """

@@ -116,7 +116,7 @@ class LinkInline(admin.TabularInline):
     fields = ('link_target', 'link_hash',)
     readonly_fields = ('link_hash',)
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         """
         Don't show links with identifier because they aren't changable.
         """
