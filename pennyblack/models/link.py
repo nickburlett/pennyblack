@@ -4,9 +4,14 @@ from django.db import models
 from django.template import Context, Template
 from django.utils.translation import ugettext_lazy as _
 
-import datetime
 import hashlib
 import random
+
+try:
+    from django.utils.timezone import now
+except ImportError:
+    from datetime import datetime
+    now = datetime.now
 
 
 #-----------------------------------------------------------------------------
@@ -103,7 +108,7 @@ class LinkClick(models.Model):
     """
     link = models.ForeignKey('pennyblack.Link', related_name='clicks')
     mail = models.ForeignKey('pennyblack.Mail', related_name='clicks')
-    date = models.DateTimeField(default=datetime.datetime.now())
+    date = models.DateTimeField(default=now)
 
     class Meta:
         app_label = 'pennyblack'
