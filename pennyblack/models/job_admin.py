@@ -2,6 +2,11 @@ from django.conf.urls import patterns, url
 from django.contrib import admin
 from django.contrib.admin.util import unquote
 from django import forms
+from django.core.context_processors import csrf
+from django.shortcuts import render_to_response
+from django.utils.translation import ugettext_lazy as _
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from pennyblack import settings
 

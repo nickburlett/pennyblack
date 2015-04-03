@@ -1,11 +1,8 @@
 from django.conf.urls import patterns, url
 from django.contrib.contenttypes import generic
 from django.core import mail
-from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
