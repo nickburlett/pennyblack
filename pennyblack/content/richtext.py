@@ -80,12 +80,13 @@ class TextOnlyNewsletterContent(RichTextContent):
                                  self.text[match.end(1) + offset:]))
             offset += len(replacelink) - len(match.group(1))
 
-    def prepare_to_send(self):
+    def prepare_to_send(self, save=True):
         """
         insert link_style into all a tags
         """
         self.text = re.sub(r"<a ", "<a style=\"{% get_newsletterstyle request link_style %}\"", self.text)
-        self.save()
+        if save:
+            self.save()
 
     def get_template(self):
         """

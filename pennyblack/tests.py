@@ -24,10 +24,10 @@ class NewsletterTestCase(unittest.TestCase):
 #     def test_is_valid(self):
 #         self.assertFalse(self.mail.is_valid())
 
-
 class RichtextContentTest(unittest.TestCase):
     content = None
     job = None
+    count = 0
 
     class Job(object):
         def __init__(self, link):
@@ -38,8 +38,15 @@ class RichtextContentTest(unittest.TestCase):
             self.times += 1
             return '{{base_url}}' + self.link
 
+
     def setUp(self):
-        self.content = TextOnlyNewsletterContent(text='<a href="http://www.test.com">link</a>')
+        try:
+            self.ContentCls = getattr(Newsletter, 
+                    '%s_set' % TextOnlyNewsletterContent.__name__.lower() ).related.model
+        except AttributeError:
+            self.ContentCls = Newsletter.create_content_type(
+                TextOnlyNewsletterContent, regions=('notexists',) )
+        self.content = self.ContentCls(text='<a href="http://www.test.com">link</a>')
         self.link = reverse('pennyblack.redirect_link', kwargs={'mail_hash': '{{mail.mail_hash}}', 'link_hash': '1234'}).replace('%7B', '{').replace('%7D', '}')
         self.job = self.Job(self.link)
 
@@ -74,10 +81,10 @@ class RichtextContentTest(unittest.TestCase):
 
     def test_link_style(self):
         self.content.text = '<a >link</a>'
-        self.content.prepare_to_send()
-        self.assertEqual(self.content.text, '<a {% get_newsletterstyle request text_and_image_title %}>link</a>')
+        self.content.prepare_to_send(save=False)
+        self.assertEqual(self.content.text, '<a style="{% get_newsletterstyle request link_style %}">link</a>')
 
     def test_multiple_link_styles(self):
         self.content.text = '<a >link</a><a >link</a>'
-        self.content.prepare_to_send()
-        self.assertEqual(self.content.text, '<a {% get_newsletterstyle request text_and_image_title %}>link</a><a {% get_newsletterstyle request text_and_image_title %}>link</a>')
+        self.content.prepare_to_send(save=False)
+        self.assertEqual(self.content.text, '<a style="{% get_newsletterstyle request link_style %}">link</a><a style="{% get_newsletterstyle request link_style %}">link</a>')

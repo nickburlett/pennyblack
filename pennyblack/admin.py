@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from pennyblack.models.newsletter import Newsletter, NewsletterAdmin
-from pennyblack.models.job import Job, JobAdmin, JobStatistic, JobStatisticAdmin
+from pennyblack.models.job import Job, JobStatistic
+from pennyblack.models.job_admin import JobAdmin, JobStatisticAdmin
 from pennyblack.models.sender import Sender, SenderAdmin
 
 admin.site.register(Newsletter, NewsletterAdmin)
