@@ -3,7 +3,10 @@ import random
 from rfc822 import dump_address_pair
 
 from django.contrib import admin
-from django.contrib.contenttypes import generic
+try:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+except ImportError:
+    from django.contrib.contenttypes import GenericForeignKey
 from django.core import mail
 from django.core.urlresolvers import NoReverseMatch, reverse
 from django.core.validators import EmailValidator
@@ -42,7 +45,7 @@ class Mail(models.Model):
     sent = models.BooleanField(default=False)
     content_type = models.ForeignKey('contenttypes.ContentType')
     object_id = models.PositiveIntegerField()
-    person = generic.GenericForeignKey('content_type', 'object_id')
+    person = GenericForeignKey('content_type', 'object_id')
     job = models.ForeignKey('pennyblack.Job', related_name="mails")
     mail_hash = models.CharField(max_length=32, blank=True)
     email = models.EmailField()  # the address is stored when the mail is sent

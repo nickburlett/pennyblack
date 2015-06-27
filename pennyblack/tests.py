@@ -42,7 +42,7 @@ class RichtextContentTest(unittest.TestCase):
     def setUp(self):
         try:
             self.ContentCls = getattr(Newsletter, 
-                    '%s_set' % TextOnlyNewsletterContent.__name__.lower() ).related.model
+                    '%s_set' % TextOnlyNewsletterContent.__name__.lower() ).related.related_model
         except AttributeError:
             self.ContentCls = Newsletter.create_content_type(
                 TextOnlyNewsletterContent, regions=('notexists',) )

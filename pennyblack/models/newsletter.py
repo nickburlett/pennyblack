@@ -14,7 +14,6 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin import item_editor
-from feincms.management.checker import check_database_schema
 from feincms.models import Base
 from feincms.utils import copy_model_instance
 
@@ -229,10 +228,6 @@ class Newsletter(Base):
         if identifier not in cls._view_links.keys():
             raise ImproperlyConfigured("no view with identifier '%s' found" % identifier)
         return cls._view_links[identifier]
-
-
-Newsletter.__module__ = 'pennyblack.models'
-signals.post_syncdb.connect(check_database_schema(Newsletter, __name__), weak=False)
 
 
 class Attachment(models.Model):

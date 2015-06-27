@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, url
 from django.contrib import admin
-from django.contrib.admin.util import unquote
+try:
+    from django.contrib.admin.utils import unquote
+except ImportError:
+    from django.contrib.admin.util import unquote
 from django import forms
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
@@ -50,7 +53,7 @@ class JobAdmin(admin.ModelAdmin):
         if request.method == 'POST' and "_send" in request.POST:
             obj.start_sending()
             self.message_user(request, _("Newsletter has been marked for delivery."))
-        return HttpResponseRedirect(reverse('admin:%s_%s_changelist' % (self.model._meta.app_label, self.model._meta.module_name)))
+        return HttpResponseRedirect(reverse('admin:%s_%s_changelist' % (self.model._meta.app_label, self.model._meta.model_name)))
 
     def response_change(self, request, obj):
         """
@@ -69,7 +72,7 @@ class JobAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = super(JobAdmin, self).get_urls()
-        info = self.model._meta.app_label, self.model._meta.module_name
+        info = self.model._meta.app_label, self.model._meta.model_name
         my_urls = patterns('',
             url(r'^(?P<object_id>\d+)/send/$', self.admin_site.admin_view(self.send_newsletter_view), name=('%s_%s_send' % info)),
         )
@@ -143,7 +146,7 @@ class JobStatisticAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = super(JobStatisticAdmin, self).get_urls()
-        info = self.model._meta.app_label, self.model._meta.module_name
+        info = self.model._meta.app_label, self.model._meta.model_name
         my_urls = patterns('',
             url(r'^(?P<object_id>\d+)/email-list/$', self.admin_site.admin_view(self.email_list_view), name='%s_%s_email_list' % info),
             url(r'^(?P<object_id>\d+)/user-agents/$', self.admin_site.admin_view(self.user_agents_view), name='%s_%s_user_agents' % info),

@@ -1,6 +1,9 @@
 from django.core import files
 from django.db import models
-from django.forms.util import ErrorList
+try:
+    from django.forms.utils import ErrorList # django >= 1.8
+except ImportError:
+    from django.forms.util import ErrorList  # django < 1.8
 from django.template import Context, Template, TemplateSyntaxError
 from django.utils.translation import ugettext_lazy as _
 

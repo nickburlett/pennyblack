@@ -1,5 +1,8 @@
 from django.contrib import admin
-from django.contrib.contenttypes import generic
+try:
+    from django.contrib.contenttypes.fields import GenericRelation
+except ImportError:
+    from django.contrib.contenttypes import GenericRelation
 from django.db import models
 
 from pennyblack import settings
@@ -47,7 +50,7 @@ class NewsletterSubscriber(models.Model, NewsletterReceiverMixin):
                                     related_name='subscribers')
     date_subscribed = models.DateTimeField(verbose_name="Subscribe Date",
                                            default=now)
-    mails = generic.GenericRelation('pennyblack.Mail')
+    mails = GenericRelation('pennyblack.Mail')
     is_active = models.BooleanField(verbose_name="Active", default=True)
 
     objects = newsletter_subscriber_manager
@@ -56,6 +59,7 @@ class NewsletterSubscriber(models.Model, NewsletterReceiverMixin):
     class Meta:
         verbose_name = "Subscriber"
         verbose_name_plural = "Subscribers"
+        app_label = "subscriber"
 
     def __unicode__(self):
         return self.email
@@ -119,6 +123,7 @@ class SubscriberGroup(models.Model, JobUnitMixin):
     class Meta:
         verbose_name = "Subscriber Group"
         verbose_name_plural = "Subscriber Groups"
+        app_label = "subscriber"
 
     def __unicode__(self):
         return self.name

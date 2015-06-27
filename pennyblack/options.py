@@ -90,7 +90,7 @@ class JobUnitAdmin(admin.ModelAdmin):
         else:
             form = self.collection_select_form(group_object=obj,
                                                extra_fields=self.collection_selection_form_extra_fields)
-        info = self.model._meta.app_label, self.model._meta.module_name
+        info = self.model._meta.app_label, self.model._meta.model_name
         context = {
             'opts': self.model._meta,
             'app_label': self.model._meta.app_label,
@@ -103,7 +103,7 @@ class JobUnitAdmin(admin.ModelAdmin):
     def get_urls(self):
         from django.conf.urls import patterns, url
         urls = super(JobUnitAdmin, self).get_urls()
-        info = self.model._meta.app_label, self.model._meta.module_name
+        info = self.model._meta.app_label, self.model._meta.model_name
         my_urls = patterns('',
             url(r'^(?P<object_id>\d+)/create_newsletter/$', self.admin_site.admin_view(self.create_newsletter), name='%s_%s_create_newsletter' % info),
         )

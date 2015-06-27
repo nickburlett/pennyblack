@@ -1,5 +1,8 @@
 from django.conf.urls import patterns, url
-from django.contrib.contenttypes import generic
+try:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+except ImportError:
+    from django.contrib.contenttypes.generic import GenericForeignKey
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -31,7 +34,7 @@ class Job(models.Model):
 
     content_type = models.ForeignKey('contenttypes.ContentType', null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)
-    group_object = generic.GenericForeignKey('content_type', 'object_id')
+    group_object = GenericForeignKey('content_type', 'object_id')
     collection = models.TextField(blank=True)
 
     #ga tracking
