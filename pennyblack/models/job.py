@@ -5,7 +5,7 @@ from django.conf.urls.defaults import patterns, url
 from django.contrib.contenttypes import generic
 from django.core import mail
 from django.core.context_processors import csrf
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -56,6 +56,13 @@ class Job(models.Model):
     def __unicode__(self):
         return (self.newsletter.subject if self.newsletter is not None else "unasigned delivery task")
 
+
+    def clean(self, *args, **kwargs):
+        self.public_slug = self.public_slug.strip() 
+        if self.public_slug == "":
+            self.public_slug = None
+        super(Job, self).clean(*args, **kwargs)
+
     def delete(self, *args, **kwargs):
         """
         If the job refers to a inactive Newsletter delete it.
@@ -66,7 +73,12 @@ class Job(models.Model):
 
     @property
     def public_url(self):
-        return self.newsletter.get_base_url() + reverse('pennyblack.views.view_public', args=(self.public_slug,))
+        try:
+            if self.public_slug:
+                return self.newsletter.get_base_url() + reverse('pennyblack.views.view_public', args=(self.public_slug,))
+        except (NoReverseMatch,):
+            pass
+        return None
 
 
     @property
