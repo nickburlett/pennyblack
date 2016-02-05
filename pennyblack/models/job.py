@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
+import smtplib
 
 from pennyblack import settings
 
@@ -222,11 +223,16 @@ class Job(models.Model):
             connection = mail.get_connection()
             connection.open()
             for newsletter_mail in self.mails.filter(sent=False).iterator():
-                connection.send_messages([newsletter_mail.get_message()])
-                newsletter_mail.mark_sent()
+                try:
+                    connection.send_messages([newsletter_mail.get_message()])
+                except smtplib.SMTPRecipientsRefused as e:
+                    newsletter_mail.bounce()
+                else:
+                    newsletter_mail.mark_sent()
             connection.close()
         except:
             self.status = 41
+            self.save()
             raise
         else:
             self.status = 31
