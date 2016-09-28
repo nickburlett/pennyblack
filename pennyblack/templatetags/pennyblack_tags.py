@@ -171,7 +171,7 @@ class LinkTagNode(template.Node):
             self.token = self.token.resolve(context)
         target = self.target.resolve(context)
         if 'mail' not in context:
-            return "%s %s " % (target, self.token)
+            return "%s" % (target,)
         mail = context['mail']
         link, created = Link.objects.get_or_create(token=self.token, job=mail.job)
         if created:
