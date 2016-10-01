@@ -199,8 +199,7 @@ def trackable_link(parser, token):
     if not 2 <= len(bits) <= 3:
         raise template.TemplateSyntaxError("%r expected format is 'tackable_link 'http://target_url''" % bits[0])
     if len(bits) == 2:
-        template_loader, (position_start, position_end) = parser.command_stack[0][-1]
-        link_token = hashlib.md5("%s%s" % (template_loader.loadname, position_start)).hexdigest()
+        link_token = hashlib.md5("%d%s" % (token.lineno, parser.tokens[0].contents)).hexdigest()
     else:
         link_token = template.Variable(bits[2])
     return LinkTagNode(template.Variable(bits[1]), link_token)
