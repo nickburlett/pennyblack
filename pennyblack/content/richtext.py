@@ -62,6 +62,9 @@ class TextOnlyNewsletterContent(RichTextContent):
         verbose_name = _('text only content')
         verbose_name_plural = _('text only contents')
 
+    def __repr__(self):
+        return super(TextOnlyNewsletterContent, self).__repr__() + "'''%r'''"%(self.text,)
+
     def replace_links(self, job):
         """
         Replaces all links and inserts pingback links
