@@ -120,7 +120,7 @@ def redirect_link_public_job(request, link):
     job = link.job
     target = link.get_target_for_job(job)
     if isinstance(target, types.FunctionType):
-        return HttpResponseRedirect(reverse('pennyblack.proxy', args=(mail.mail_hash, link.link_hash)))
+        return HttpResponseRedirect('/')
     # disassemble the url
     scheme, netloc, path, params, query, fragment = tuple(urlparse(target))
     if scheme in ('http', 'https'):  # insert ga tracking if scheme is appropriate
