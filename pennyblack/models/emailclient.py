@@ -18,8 +18,8 @@ class EmailClient(models.Model):
     Stores some information about the used email client and about the user
     """
     mail = models.ForeignKey('pennyblack.Mail', related_name='clients')
-    user_agent = models.CharField(max_length=255, db_index=True)
-    referer = models.CharField(max_length=1023, blank=True)
+    user_agent = models.CharField(max_length=1024, db_index=True)
+    referer = models.CharField(max_length=2048, blank=True)
     ip_address = models.IPAddressField()
     visited = models.DateTimeField(default=now)
     contact_type = models.CharField(max_length=15, default='')
