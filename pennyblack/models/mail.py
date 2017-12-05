@@ -227,5 +227,5 @@ class MailInline(admin.TabularInline):
         Don't display Inlines if there are more than a certain amount
         """
         if request._pennyblack_job_obj.mails.count() > settings.JOB_MAIL_INLINE_COUNT:
-            return super(MailInline, self).queryset(request).filter(pk=0)
-        return super(MailInline, self).queryset(request)
+            return super(MailInline, self).get_queryset(request).filter(pk=0)
+        return super(MailInline, self).get_queryset(request)

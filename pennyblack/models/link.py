@@ -125,5 +125,5 @@ class LinkInline(admin.TabularInline):
         """
         Don't show links with identifier because they aren't changable.
         """
-        queryset = super(LinkInline, self).queryset(request)
+        queryset = super(LinkInline, self).get_queryset(request)
         return queryset.filter(identifier='')
