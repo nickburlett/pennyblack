@@ -24,6 +24,9 @@ class JobAdminForm(forms.ModelForm):
     from pennyblack.models.newsletter import Newsletter
     newsletter = forms.ModelChoiceField(queryset=Newsletter.objects.massmail())
 
+    def clean_public_slug(self):
+        return self.cleaned_data['public_slug'] or None
+
 class JobAdmin(admin.ModelAdmin):
     from pennyblack.models.link import LinkInline
     from pennyblack.models.mail import MailInline
