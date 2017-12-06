@@ -143,7 +143,7 @@ class TextWithImageNewsletterContent(TextOnlyNewsletterContent):
         Gives the repalced url back, if no mail is present it gives instead
         the original url.
         """
-        if context is None:
+        if context is None or not self.image_url_replaced:
             return self.image_url
         template = Template(self.image_url_replaced)
         return template.render(context)
