@@ -169,13 +169,14 @@ class LinkTagNode(template.Node):
     def render(self, context):
         if isinstance(self.token, template.Variable):
             self.token = self.token.resolve(context)
-        target = self.target.resolve(context)
+        resolvedTarget = self.target.resolve(context)
         if 'mail' not in context:
-            return "%s %s " % (target, self.token)
+            return resolvedTarget
+        self.token = hashlib.md5("%s%s"%(self.token, resolvedTarget)).hexdigest()
         mail = context['mail']
         link, created = Link.objects.get_or_create(token=self.token, job=mail.job)
         if created:
-            link.link_target = target
+            link.link_target = resolvedTarget
             link.save()
         return context['base_url'] + reverse('pennyblack.redirect_link', args=(mail.mail_hash, link.link_hash))
 
@@ -199,8 +200,8 @@ def trackable_link(parser, token):
     if not 2 <= len(bits) <= 3:
         raise template.TemplateSyntaxError("%r expected format is 'tackable_link 'http://target_url''" % bits[0])
     if len(bits) == 2:
-        template_loader, (position_start, position_end) = parser.command_stack[0][-1]
-        link_token = hashlib.md5("%s%s" % (template_loader.loadname, position_start)).hexdigest()
+        # generate a random hash from the general contents here
+        link_token = hashlib.md5(''.join( t.contents for t in parser.tokens )).hexdigest()
     else:
         link_token = template.Variable(bits[2])
     return LinkTagNode(template.Variable(bits[1]), link_token)
