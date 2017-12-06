@@ -63,7 +63,10 @@ class Job(models.Model):
 
     @property
     def public_url(self):
-        return self.newsletter.get_base_url() + reverse('pennyblack.views.view_public', args=(self.public_slug,))
+        if self.public_slug:
+            return self.newsletter.get_base_url() + reverse('pennyblack.views.view_public', args=(self.public_slug,))
+        else:
+            return None
 
 
     @property
