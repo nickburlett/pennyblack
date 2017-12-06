@@ -10,6 +10,13 @@ from django.shortcuts import render_to_response
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+import datetime
+try:
+    from django.utils import timezone
+except ImportError:
+    now = datetime.datetime.now
+else:
+    now = timezone.now
 
 from pennyblack import settings
 
